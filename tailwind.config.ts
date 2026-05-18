@@ -1,0 +1,13 @@
+import type { Config } from 'tailwindcss';
+
+const config: Config = {
+  content: ['./app/**/*.{ts,tsx}', './components/**/*.{ts,tsx}', './lib/**/*.{ts,tsx}'],
+  theme: {
+    extend: {
+      colors: { ink: '#070816', card: '#111325', card2: '#171A33', line: '#2A2D4A' }
+    }
+  },
+  plugins: []
+};
+
+export default config;
