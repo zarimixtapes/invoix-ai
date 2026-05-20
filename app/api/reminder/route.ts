@@ -1,0 +1,1 @@
+import{NextResponse}from'next/server';export async function POST(req:Request){const{customerName,invoiceNumber,amount,dueDate}=await req.json();const fallback=`Hi ${customerName}, just a friendly reminder that invoice ${invoiceNumber} for $${amount} was due on ${dueDate}. Please let me know if you have any questions. Thank you.`;return NextResponse.json({message:fallback})}
