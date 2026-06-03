@@ -1,7 +1,0 @@
-import { NextRequest, NextResponse } from 'next/server';
-import crypto from 'crypto';
-import { z } from 'zod';
-import { createSupabaseAdmin } from '@/lib/supabase/server';
-const Body=z.object({email:z.string().email(), company_name:z.string().min(2), fingerprint:z.string().optional()});
-function hash(v:string){return crypto.createHash('sha256').update(v.toLowerCase().trim()).digest('hex')}
-export async function POST(req:NextRequest){const body=Body.parse(await req.json());const db=createSupabaseAdmin();const email_hash=hash(body.email);const fp_hash=body.fingerprint?hash(body.fingerprint):null;const {data:existing}=await db.from('trial_guardrails').select('*').or(`email_hash.eq.${email_hash}${fp_hash?`,fingerprint_hash.eq.${fp_hash}`:''}`).limit(1);if(existing&&existing.length>0)return NextResponse.json({error:'Trial already used. Please subscribe or contact support.'},{status:409});const trialEnds=new Date(Date.now()+Number(process.env.TRIAL_DAYS||14)*86400000).toISOString();const {data:company,error}=await db.from('companies').insert({name:body.company_name,trial_ends_at:trialEnds,subscription_status:'trialing'}).select().single();if(error)return NextResponse.json({error:error.message},{status:400});await db.from('trial_guardrails').insert({email_hash,fingerprint_hash:fp_hash,company_id:company.id,trial_started_at:new Date().toISOString()});return NextResponse.json({ok:true,company});}
