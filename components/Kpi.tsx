@@ -1,1 +1,0 @@
-export function Kpi({label,value,sub,tone=''}:{label:string;value:string;sub:string;tone?:'ok'|'warn'|'danger'|''}){return <div className="kpi"><span className="muted">{label}</span><strong>{value}</strong><span className={`badge ${tone}`}>{sub}</span></div>}
